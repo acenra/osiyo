@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=1280, height=720, initial-scale=1.0" name="viewport"/>
+<title>OSIYO Title Slide</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&amp;family=Russo+One&amp;family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 1280px;
+            height: 720px;
+            background-color: #050a14; /* Deep dark background */
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+        }
+
+        /* Grid Background Pattern */
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+        }
+
+        /* Fake Glow Elements (Solid colors with blur) */
+        .glow-orb-1 {
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 600px;
+            height: 600px;
+            background-color: rgba(0, 255, 255, 0.15);
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 1;
+        }
+
+        .glow-orb-2 {
+            position: absolute;
+            bottom: -150px;
+            right: -100px;
+            width: 700px;
+            height: 700px;
+            background-color: rgba(139, 92, 246, 0.15); /* Violet */
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 1;
+        }
+
+        /* Content Z-Index */
+        .content-layer {
+            z-index: 10;
+            position: relative;
+            display: flex;
+            flex: 1;
+            align-items: center;
+            padding: 0 80px;
+        }
+
+        .text-content {
+            flex: 1;
+            z-index: 20;
+        }
+
+        .image-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        /* Typography */
+        .main-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 120px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 
+                0 0 10px rgba(0, 255, 255, 0.8),
+                0 0 20px rgba(0, 255, 255, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-family: 'Russo One', sans-serif;
+            font-size: 32px;
+            color: #a5b4fc;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 4px solid #00ffff;
+            padding-left: 20px;
+        }
+
+        .meta-info {
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+            color: #94a3b8;
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+        }
+
+        .meta-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Futuristic Decor Lines */
+        .decor-line {
+            position: absolute;
+            background-color: #00ffff;
+            box-shadow: 0 0 8px #00ffff;
+        }
+
+        .line-top {
+            top: 60px;
+            right: 0;
+            width: 300px;
+            height: 2px;
+        }
+        
+        .line-bottom {
+            bottom: 60px;
+            left: 0;
+            width: 400px;
+            height: 2px;
+        }
+
+        /* Image Frame */
+        .hero-image-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 14px;
+            opacity: 0.9;
+        }
+
+        .corner-accent {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 5px #00ffff;
+        }
+
+        .corner-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        .corner-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+    </style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Background Elements -->
+<div class="bg-grid"></div>
+<div class="glow-orb-1"></div>
+<div class="glow-orb-2"></div>
+<!-- Decorative Lines -->
+<div class="decor-line line-top"></div>
+<div class="decor-line line-bottom"></div>
+<!-- Main Content -->
+<div class="content-layer">
+<!-- Text Column -->
+<div class="text-content">
+<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+<i class="fas fa-microchip" style="color: #00ffff; font-size: 24px;"></i>
+<span style="color: #00ffff; letter-spacing: 2px; font-family: 'Orbitron'; font-size: 14px;">PROJECT SYSTEM</span>
+</div>
+<h1 class="main-title">OSIYO</h1>
+<p class="subtitle">
+                Интеллектуальный<br/>
+                голосовой ассистент<br/>
+                и роботизированная система
+            </p>
+<div class="meta-info">
+<div class="meta-item">
+<span class="meta-label">АВТОР ПРОЕКТА</span>
+<span class="meta-value">Студенты НГТУ</span>
+</div>
+<div class="meta-item">
+<span class="meta-label">ГОД РЕЛИЗА</span>
+<span class="meta-value">2026</span>
+</div>
+<div class="meta-item">
+<span class="meta-label">ВЕРСИЯ</span>
+<span class="meta-value">v 1.0 AI</span>
+</div>
+</div>
+</div>
+<!-- Visual Column -->
+<div class="image-content">
+  <div class="hero-image-container">
+    <!-- Угловые акценты -->
+    <div class="corner-accent corner-tl"></div>
+    <div class="corner-accent corner-tr"></div>
+    <div class="corner-accent corner-bl"></div>
+    <div class="corner-accent corner-br"></div>
+    
+    <!-- Ваша картинка -->
+    <img 
+      alt="Моя презентационная картинка" 
+      class="hero-image" 
+      src="../images/1.jpg"
+    />
+    
+    <!-- Overlay badge -->
+    <div style="
+      position: absolute; 
+      bottom: 20px; 
+      left: 20px; 
+      background: rgba(0,0,0,0.7); 
+      padding: 8px 16px; 
+      border-radius: 4px; 
+      border-left: 3px solid #00ffff;
+    ">
+      <p style="margin: 0; font-family: 'Orbitron'; font-size: 12px; color: #fff;">
+        <i class="fas fa-robot margin-right-2"></i> POWERED BY ACENRA
+      </p>
+    </div>
+  </div>
+</div>
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

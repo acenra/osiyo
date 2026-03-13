@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+<meta charset="UTF-8">
+<title>OSIYO Presentation</title>
+
+<style>
+
+body{
+margin:0;
+background:#050a14;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+}
+
+#presentation{
+width:1280px;
+height:720px;
+position:relative;
+overflow:hidden;
+}
+
+/* слайды */
+
+.slide{
+position:absolute;
+width:100%;
+height:100%;
+top:0;
+left:0;
+opacity:0;
+transition:opacity 1.2s ease; /* красивый fade */
+}
+
+.slide.active{
+opacity:1;
+z-index:10;
+}
+
+iframe{
+width:100%;
+height:100%;
+border:none;
+}
+
+/* progress bar */
+
+#progressContainer{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:6px;
+background:#111;
+}
+
+#progressBar{
+height:100%;
+width:0%;
+background:#00ffff;
+transition:width .5s;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div id="presentation">
+
+<section class="slide active"><iframe src="slides/slide1.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide2.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide3.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide4.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide5.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide6.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide7.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide8.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide9.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide10.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide11.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide12.html"></iframe></section>
+<section class="slide"><iframe src="slides/slide13.html"></iframe></section>
+
+<div id="progressContainer">
+<div id="progressBar"></div>
+</div>
+
+</div>
+
+
+<script>
+
+const slides = document.querySelectorAll(".slide")
+const progressBar = document.getElementById("progressBar")
+
+let index = 0
+let timer
+
+const videoSlideIndex = slides.length - 1  // последний слайд с видео
+
+// добавим fade для всех слайдов
+slides.forEach(slide => {
+  slide.style.transition = "opacity 1s ease"
+  slide.style.opacity = "0"
+})
+slides[0].style.opacity = "1"
+slides[0].classList.add("active")
+
+function showSlide(i){
+
+  // скрываем текущий слайд
+  slides[index].classList.remove("active")
+  slides[index].style.opacity = "0"
+
+  index = i
+
+  if(index >= slides.length){
+    index = 0
+  }
+
+  // показываем новый слайд
+  slides[index].classList.add("active")
+  slides[index].style.opacity = "1"
+
+  // обновляем прогресс-бар
+  updateProgress()
+
+  // если это видео-слайд, останавливаем авто-переключение
+  if(index === videoSlideIndex){
+
+    clearInterval(timer)
+
+    // перезапускаем видео (iframe)
+    const frame = slides[index].querySelector("iframe")
+    if(frame){
+      frame.src = frame.src
+    }
+
+  }else{
+
+    restartTimer()
+
+  }
+
+}
+
+function nextSlide(){
+  showSlide(index + 1)
+}
+
+function updateProgress(){
+  let percent = ((index+1)/slides.length)*100
+  progressBar.style.width = percent + "%"
+}
+
+function startTimer(){
+  timer = setInterval(nextSlide,6000)
+}
+
+function restartTimer(){
+  clearInterval(timer)
+  startTimer()
+}
+
+startTimer()
+
+
+/* сообщение от видео */
+window.addEventListener("message",(event)=>{
+
+  if(event.data === "videoEnded"){
+
+    // показываем первый слайд после окончания видео
+    showSlide(0)
+
+  }
+
+})
+
+</script>
+
+</body>
+</html>

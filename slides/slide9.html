@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=1280, height=720, initial-scale=1.0" name="viewport"/>
+<title>OSIYO Robotic Arm</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;family=Russo+One&amp;family=Orbitron:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 1280px;
+            height: 720px;
+            background-color: #050a14;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #050a14;
+            /* Grid pattern background */
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2300ffff' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Decorative Background Elements */
+        .glow-spot {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background-color: rgba(139, 92, 246, 0.05); /* Violet faint glow */
+            border-radius: 50%;
+            filter: blur(80px);
+            top: -200px;
+            right: -200px;
+            z-index: 0;
+        }
+
+        /* Header */
+        .header {
+            padding: 40px 60px 10px 60px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-icon {
+            font-size: 32px;
+            color: #00ffff;
+            margin-right: 20px;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .page-tag {
+            margin-left: auto;
+            font-family: 'Russo One', sans-serif;
+            font-size: 14px;
+            color: #8b5cf6;
+            border: 1px solid #8b5cf6;
+            padding: 5px 15px;
+            border-radius: 4px;
+            background-color: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Main Content Layout */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            padding: 40px 60px;
+            gap: 60px;
+            z-index: 10;
+            align-items: center;
+        }
+
+        /* Left Column: Image/Visual */
+        .left-col {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .vision-frame {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .vision-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+            filter: contrast(1.1) saturate(1.2);
+        }
+
+        /* HUD Overlay Elements */
+        .hud-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 10px #00ffff;
+            top: 60%; 
+        }
+
+        .hud-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: #00ffff;
+            border-style: solid;
+            border-width: 2px;
+        }
+        .hc-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .hc-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .hc-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+        .hc-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .target-box {
+            position: absolute;
+            top: 25%;
+            left: 35%;
+            width: 180px;
+            height: 220px;
+            border: 1px dashed rgba(139, 92, 246, 0.7);
+            box-shadow: 0 0 5px rgba(139, 92, 246, 0.2);
+        }
+
+        .target-label {
+            position: absolute;
+            top: -20px;
+            left: 0;
+            background-color: rgba(139, 92, 246, 0.7);
+            color: white;
+            font-size: 10px;
+            padding: 2px 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .target-box-2 {
+            position: absolute;
+            bottom: 20%;
+            right: 15%;
+            width: 100px;
+            height: 60px;
+            border: 1px solid rgba(0, 255, 255, 0.7);
+        }
+        
+        .target-label-2 {
+            position: absolute;
+            bottom: -20px;
+            right: 0;
+            background-color: rgba(0, 255, 255, 0.7);
+            color: black;
+            font-size: 10px;
+            padding: 2px 5px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        .hud-data {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        /* Right Column: Text Content */
+        .right-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 32px;
+            color: #e2e8f0;
+            margin-bottom: 20px;
+            border-left: 4px solid #00ffff;
+            padding-left: 20px;
+        }
+
+        .content-desc {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            background-color: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background-color: rgba(0, 255, 255, 0.05);
+            border-color: rgba(0, 255, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .f-icon-box {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 255, 255, 0.1);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            color: #00ffff;
+        }
+
+        .f-text h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            color: #fff;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+        }
+
+        .f-text p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #94a3b8;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .footer {
+            height: 40px;
+            padding: 0 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10;
+        }
+
+        .footer-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            color: #64748b;
+            letter-spacing: 2px;
+        }
+
+        .slide-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #00ffff;
+        }
+
+    </style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Background Glow -->
+<div class="glow-spot"></div>
+<!-- Header -->
+<div class="header">
+<i class="fas fa-hand-sparkles header-icon"></i>
+<h1 class="page-title">Роботизированная Рука</h1>
+<div class="page-tag">MODULE: ROBOTICS</div>
+</div>
+<!-- Main Content -->
+<div class="content-wrapper">
+<!-- Left Column: HUD Visualization -->
+<div class="left-col">
+<div class="vision-frame">
+<img alt="Robotic Arm Control Interface" class="vision-image" src="../images/3.png"/>
+<!-- HUD Overlay -->
+<div class="hud-overlay">
+<!-- Scan Line -->
+<div class="scan-line"></div>
+<!-- Corners -->
+<div class="hud-corner hc-tl"></div>
+<div class="hud-corner hc-tr"></div>
+<div class="hud-corner hc-bl"></div>
+<div class="hud-corner hc-br"></div>
+<!-- Target Boxes -->
+<div class="target-box">
+<div class="target-label">TARGET: SERVO ACTUATOR</div>
+</div>
+<div class="target-box-2">
+<div class="target-label-2">STATUS: OK</div>
+</div>
+<!-- Data Text -->
+<div class="hud-data">
+                            TORQUE: 85.4%<br/>
+                            GRIP FORCE: 12N<br/>
+                            SYNC: ACTIVE
+                        </div>
+</div>
+</div>
+</div>
+<!-- Right Column: Text Content -->
+<div class="right-col">
+<h2 class="content-title">Управление Жестами и Движением</h2>
+<p class="content-desc">
+                    Робот полностью управляется голосом, повторяя движения человеческой руки с высокой точностью, плавностью и безопасностью.
+                </p>
+<div class="feature-list">
+<!-- Feature 1 -->
+<div class="feature-item">
+<div class="f-icon-box">
+<i class="fas fa-fingerprint"></i>
+</div>
+<div class="f-text">
+<h4>FINGER CONTROL</h4>
+<p>Независимое управление каждым пальцем для точного захвата мелких объектов.</p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="feature-item">
+<div class="f-icon-box">
+<i class="fas fa-microphone-lines"></i>
+</div>
+<div class="f-text">
+<h4>VOICE COMMANDS</h4>
+<p>Мгновенное выполнение команд: «Открыть руку», «Взять предмет», «Стоп».</p>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="feature-item">
+<div class="f-icon-box">
+<i class="fas fa-hand-paper"></i>
+</div>
+<div class="f-text">
+<h4>GESTURE ANIMATION</h4>
+<p>Библиотека предустановленных жестов для приветствия и коммуникации.</p>
+</div>
+</div>
+<!-- Feature 4 -->
+<div class="feature-item">
+<div class="f-icon-box">
+<i class="fas fa-robot"></i>
+</div>
+<div class="f-text">
+<h4>SMART GRIP</h4>
+<p>Адаптивная сила сжатия для предотвращения повреждения хрупких предметов.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="footer">
+<span class="footer-text">OSIYO // ROBOTICS CONTROL SYSTEM</span>
+<span class="slide-number">09</span>
+</div>
+</div>
+</body>
+</html>

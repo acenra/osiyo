@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=1280, height=720, initial-scale=1.0" name="viewport"/>
+<title>OSIYO Project Description</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&amp;family=Russo+One&amp;family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 1280px;
+            height: 720px;
+            background-color: #050a14;
+        }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            /* Simple background image or color instead of gradient */
+            background-image: url("https://page.gensparksite.com/slides_images/3e05896e4468657d003f22901911d82a.webp"); 
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Dark overlay to ensure text readability */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 10, 20, 0.92);
+            z-index: 1;
+        }
+
+        /* Decorative Grid lines (using borders instead of gradients) */
+        .grid-line-h {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(0, 255, 255, 0.1);
+            z-index: 2;
+        }
+        .grid-line-v {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 1px;
+            background-color: rgba(0, 255, 255, 0.1);
+            z-index: 2;
+        }
+
+        /* Header Styles */
+        .header {
+            position: relative;
+            z-index: 10;
+            padding: 40px 60px 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .project-tag {
+            font-family: 'Russo One', sans-serif;
+            color: #00ffff;
+            font-size: 18px;
+            background-color: rgba(0, 255, 255, 0.1);
+            padding: 5px 15px;
+            border: 1px solid #00ffff;
+            border-radius: 4px;
+        }
+
+        /* Main Content Layout */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex: 1;
+            padding: 40px 60px;
+            gap: 60px;
+        }
+
+        /* Left Column */
+        .left-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .description-box {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #8b5cf6; /* Violet accent */
+            padding: 30px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 30px;
+        }
+
+        .main-desc {
+            font-size: 24px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            font-weight: 300;
+        }
+
+        .highlight-text {
+            color: #00ffff;
+            font-weight: 700;
+        }
+
+        /* Right Column (Modules Grid) */
+        .right-col {
+            flex: 1.2;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-content: center;
+        }
+
+        .module-card {
+            width: calc(50% - 10px);
+            background-color: rgba(13, 22, 35, 0.8);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .module-card:hover {
+            border-color: #00ffff;
+            background-color: rgba(0, 255, 255, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: rgba(0, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .module-icon {
+            font-size: 32px;
+            color: #00ffff;
+        }
+
+        .module-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .module-desc {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        /* Accent Colors for specific cards */
+        .card-voice .icon-circle { border-color: #00ffff; }
+        .card-voice .module-icon { color: #00ffff; }
+        
+        .card-vision .icon-circle { border-color: #8b5cf6; } /* Violet */
+        .card-vision .module-icon { color: #8b5cf6; }
+
+        .card-speech .icon-circle { border-color: #f472b6; } /* Pink */
+        .card-speech .module-icon { color: #f472b6; }
+
+        .card-robot .icon-circle { border-color: #34d399; } /* Green */
+        .card-robot .module-icon { color: #34d399; }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 20;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .slide-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #00ffff;
+            font-weight: 700;
+        }
+
+    </style>
+</head>
+<body>
+<div class="slide-container">
+<div class="overlay"></div>
+<!-- Decorative Grid Lines -->
+<div class="grid-line-h" style="top: 20%;"></div>
+<div class="grid-line-h" style="top: 40%;"></div>
+<div class="grid-line-h" style="top: 60%;"></div>
+<div class="grid-line-h" style="top: 80%;"></div>
+<div class="grid-line-v" style="left: 20%;"></div>
+<div class="grid-line-v" style="left: 40%;"></div>
+<div class="grid-line-v" style="left: 60%;"></div>
+<div class="grid-line-v" style="left: 80%;"></div>
+<!-- Header -->
+<header class="header">
+<h1 class="page-title">Описание Проекта</h1>
+<div class="project-tag">OSIYO SYSTEM</div>
+</header>
+<!-- Main Content -->
+<div class="content-wrapper">
+<!-- Left Column: Description -->
+<div class="left-col">
+<div class="description-box">
+<p class="main-desc">
+<span class="highlight-text">OSIYO</span> — это интеллектуальная система на основе искусственного интеллекта, которая объединяет передовые технологии для создания естественного интерфейса взаимодействия между человеком и машиной.
+                </p>
+</div>
+<div style="padding-left: 30px;">
+<p style="font-size: 16px; color: #94a3b8; margin-bottom: 20px;">
+<i class="fas fa-check-circle" style="color: #34d399; margin-right: 10px;"></i>
+                    Полная интеграция Hardware и Software
+                </p>
+<p style="font-size: 16px; color: #94a3b8; margin-bottom: 20px;">
+<i class="fas fa-check-circle" style="color: #34d399; margin-right: 10px;"></i>
+                    Локальная обработка данных
+                </p>
+<p style="font-size: 16px; color: #94a3b8;">
+<i class="fas fa-check-circle" style="color: #34d399; margin-right: 10px;"></i>
+                    Адаптивность под пользователя
+                </p>
+</div>
+</div>
+<!-- Right Column: Modules Grid -->
+<div class="right-col">
+<!-- Module 1 -->
+<div class="module-card card-voice">
+<div class="icon-circle">
+<i class="fas fa-microphone-lines module-icon"></i>
+</div>
+<h3 class="module-title">AI Голосовой Ассистент</h3>
+<p class="module-desc">Интеллектуальный диалог и обработка естественного языка.</p>
+</div>
+<!-- Module 2 -->
+<div class="module-card card-vision">
+<div class="icon-circle">
+<i class="fas fa-eye module-icon"></i>
+</div>
+<h3 class="module-title">Компьютерное Зрение</h3>
+<p class="module-desc">Распознавание объектов и анализ окружающей среды через камеру.</p>
+</div>
+<!-- Module 3 -->
+<div class="module-card card-speech">
+<div class="icon-circle">
+<i class="fas fa-wave-square module-icon"></i>
+</div>
+<h3 class="module-title">Синтез Речи</h3>
+<p class="module-desc">Распознавание (STT) и генерация речи (TTS) на узбекском языке.</p>
+</div>
+<!-- Module 4 -->
+<div class="module-card card-robot">
+<div class="icon-circle">
+<i class="fas fa-hand-sparkles module-icon"></i>
+</div>
+<h3 class="module-title">Робототехника</h3>
+<p class="module-desc">Точное управление механизированной рукой через голосовые команды.</p>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="footer">
+<span class="footer-text">OSIYO // INTELLIGENT SYSTEM</span>
+<span class="slide-number">02</span>
+</div>
+</div>
+</body>
+</html>

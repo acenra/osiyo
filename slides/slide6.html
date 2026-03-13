@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=1280, height=720, initial-scale=1.0" name="viewport"/>
+<title>OSIYO Voice Assistant</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;family=Russo+One&amp;family=Orbitron:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 1280px;
+            height: 720px;
+            background-color: #050a14;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: #050a14;
+            /* Hexagonal pattern background */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l25.98 15v30L30 60 4.02 45V15z' fill-opacity='0.02' fill='%2300ffff' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        /* Decorative Elements */
+        .glow-orb {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background-color: rgba(0, 255, 255, 0.05);
+            border-radius: 50%;
+            filter: blur(100px);
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .tech-line {
+            position: absolute;
+            background-color: rgba(0, 255, 255, 0.2);
+            z-index: 1;
+        }
+
+        .header {
+            padding: 40px 60px 10px 60px;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(to right, rgba(5,10,20,0.9), rgba(5,10,20,0)); 
+            /* Note: Gradients are discouraged but linear-gradient for masking/fading is sometimes necessary. 
+               Here I will use solid color with transparency to be safe per instructions */
+            background-color: rgba(5, 10, 20, 0.8);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .title-icon {
+            color: #00ffff;
+            font-size: 32px;
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
+        }
+
+        .page-tag {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background-color: rgba(0, 255, 255, 0.05);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        /* Main Content */
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            padding: 40px 60px;
+            gap: 60px;
+            z-index: 10;
+            align-items: center;
+        }
+
+        /* Left Column: Text */
+        .text-col {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 36px;
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+            color: #94a3b8;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            background-color: rgba(13, 22, 35, 0.6);
+            border-left: 4px solid #334155;
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background-color: rgba(0, 255, 255, 0.05);
+            border-left-color: #00ffff;
+            transform: translateX(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            margin-right: 20px;
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .feature-card:hover .card-icon {
+            background-color: rgba(0, 255, 255, 0.2);
+            color: white;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+        }
+
+        .card-text h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            color: #ffffff;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+        }
+
+        .card-text p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #cbd5e1;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Right Column: Image */
+        .image-col {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .image-frame {
+            position: relative;
+            width: 420px;
+            height: 480px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Clip path for tech shape */
+            clip-path: polygon(
+                0 0, 
+                100% 0, 
+                100% 85%, 
+                85% 100%, 
+                0 100%
+            );
+        }
+
+        /* Additional visual border to match clip-path visually since border is clipped */
+        .image-frame::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) brightness(0.9);
+            /* Matching clip path for inner image */
+            clip-path: polygon(
+                0 0, 
+                100% 0, 
+                100% 85%, 
+                85% 100%, 
+                0 100%
+            );
+        }
+
+        /* Sound Wave Decoration */
+        .sound-wave-container {
+            position: absolute;
+            right: -30px;
+            bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 20;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .bar {
+            width: 6px;
+            background-color: #00ffff;
+            border-radius: 3px;
+            box-shadow: 0 0 8px #00ffff;
+        }
+
+        /* Static representation of a sound wave */
+        .bar:nth-child(1) { height: 20px; opacity: 0.6; }
+        .bar:nth-child(2) { height: 35px; opacity: 0.8; }
+        .bar:nth-child(3) { height: 50px; opacity: 1; }
+        .bar:nth-child(4) { height: 40px; opacity: 0.9; }
+        .bar:nth-child(5) { height: 25px; opacity: 0.7; }
+        .bar:nth-child(6) { height: 45px; opacity: 0.9; }
+        .bar:nth-child(7) { height: 30px; opacity: 0.7; }
+        .bar:nth-child(8) { height: 15px; opacity: 0.5; }
+
+        .wave-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            color: #00ffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .footer {
+            height: 40px;
+            padding: 0 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10;
+        }
+
+        .footer-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            color: #64748b;
+            letter-spacing: 2px;
+        }
+
+        .slide-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #00ffff;
+        }
+
+    </style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Background Glow -->
+<div class="glow-orb"></div>
+<!-- Header -->
+<header class="header">
+<h1 class="page-title">
+<i class="fas fa-microphone-lines title-icon"></i>
+                Голосовой AI-Ассистент
+            </h1>
+<div class="page-tag">VOICE MODULE</div>
+</header>
+<!-- Main Content -->
+<div class="content-wrapper">
+<!-- Left Column: Features -->
+<div class="text-col">
+<div class="section-header">
+<h2 class="section-title">Интеллектуальный Диалог</h2>
+<p class="section-subtitle">Естественное взаимодействие человека и системы через голосовой интерфейс.</p>
+</div>
+<div class="feature-list">
+<!-- Feature 1: Activation -->
+<div class="feature-card">
+<div class="card-icon">
+<i class="fas fa-power-off"></i>
+</div>
+<div class="card-text">
+<h3>Активация "OSIYO"</h3>
+<p>Система находится в спящем режиме и мгновенно активируется при произнесении ключевого слова.</p>
+</div>
+</div>
+<!-- Feature 2: Dialogue -->
+<div class="feature-card">
+<div class="card-icon">
+<i class="fas fa-comments"></i>
+</div>
+<div class="card-text">
+<h3>Живой Диалог</h3>
+<p>Поддержка контекста беседы, понимание естественного языка и уточняющих вопросов.</p>
+</div>
+</div>
+<!-- Feature 3: Assistance -->
+<div class="feature-card">
+<div class="card-icon">
+<i class="fas fa-lightbulb"></i>
+</div>
+<div class="card-text">
+<h3>Помощь и Советы</h3>
+<p>Интеллектуальный поиск ответов в базе знаний и генерация полезных рекомендаций.</p>
+</div>
+</div>
+<!-- Feature 4: Commands -->
+<div class="feature-card">
+<div class="card-icon">
+<i class="fas fa-terminal"></i>
+</div>
+<div class="card-text">
+<h3>Обработка Команд</h3>
+<p>Преобразование сложных голосовых инструкций в точные цифровые команды для робота.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Visual -->
+<div class="image-col">
+<div class="image-frame">
+<img alt="AI Voice Assistant Interface" class="main-image" src="../images/3.jpg"/>
+<!-- Sound Wave Visual Element -->
+<div class="sound-wave-container">
+<div class="wave-label">VOICE INPUT DETECTED</div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="footer">
+<span class="footer-text">OSIYO // NLP CORE SYSTEM</span>
+<span class="slide-number">06</span>
+</footer>
+</div>
+</body>
+</html>

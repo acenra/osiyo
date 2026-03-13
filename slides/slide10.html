@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=1280, height=720, initial-scale=1.0" name="viewport"/>
+<title>OSIYO System Architecture</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;family=Russo+One&amp;family=Orbitron:wght@400;600;700;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        width: 1280px;
+        height: 720px;
+        background-color: #050a14;
+        font-family: 'Roboto', sans-serif;
+        color: white;
+        overflow: hidden;
+    }
+    
+    .slide-container {
+        width: 1280px;
+        height: 720px;
+        position: relative;
+        background-color: #050a14;
+        /* Grid background */
+        background-image: 
+            linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    /* Header */
+    .header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 40px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 20;
+    }
+
+    .page-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 42px;
+        font-weight: 800;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .page-subtitle {
+        font-family: 'Share Tech Mono', monospace;
+        color: #00ffff;
+        font-size: 18px;
+        border: 1px solid #00ffff;
+        padding: 5px 15px;
+        background: rgba(0, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+
+    /* Diagram Area */
+    .diagram-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        pointer-events: none; /* Let clicks pass through to nodes */
+    }
+
+    /* Connecting Lines (SVG) */
+    .connections-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .conn-line {
+        stroke: #00ffff;
+        stroke-width: 2;
+        stroke-opacity: 0.6;
+        fill: none;
+        stroke-dasharray: 8;
+        animation: dash 60s linear infinite;
+    }
+
+    .conn-line.purple { stroke: #d946ef; }
+    .conn-line.green { stroke: #22c55e; }
+    .conn-line.orange { stroke: #f59e0b; }
+    .conn-line.red { stroke: #ef4444; }
+
+    @keyframes dash {
+        to {
+            stroke-dashoffset: -1000;
+        }
+    }
+
+    /* Nodes */
+    .node {
+        position: absolute;
+        width: 220px;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        pointer-events: auto;
+        z-index: 5;
+    }
+
+    .node-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .node-title {
+        font-family: 'Russo One', sans-serif;
+        font-size: 18px;
+        color: #fff;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .node-desc {
+        font-family: 'Roboto', sans-serif;
+        font-size: 13px;
+        color: #94a3b8;
+        line-height: 1.4;
+    }
+
+    /* Specific Node Positioning & Styling */
+    
+    /* Central Node: Python (Center) */
+    .node-python {
+        top: 260px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 260px;
+        border-color: #00ffff;
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+    }
+    .node-python .node-icon { color: #00ffff; border: 1px solid #00ffff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); }
+
+    /* Input Node: VOSK (Left) */
+    .node-vosk {
+        top: 260px;
+        left: 100px;
+        border-color: #3b82f6;
+    }
+    .node-vosk .node-icon { color: #3b82f6; border: 1px solid #3b82f6; }
+
+    /* AI Node: Gemini (Top) */
+    .node-ai {
+        top: 40px; /* Below header title space roughly */
+        left: 50%;
+        transform: translateX(-50%);
+        border-color: #d946ef;
+        margin-top: 60px; /* Adjust for header */
+    }
+    .node-ai .node-icon { color: #d946ef; border: 1px solid #d946ef; }
+
+    /* DB Node: SQLite (Bottom) */
+    .node-db {
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-color: #f59e0b;
+    }
+    .node-db .node-icon { color: #f59e0b; border: 1px solid #f59e0b; }
+
+    /* Output Node: TTS (Right Top) */
+    .node-tts {
+        top: 130px;
+        right: 100px;
+        border-color: #22c55e;
+    }
+    .node-tts .node-icon { color: #22c55e; border: 1px solid #22c55e; }
+
+    /* Output Node: Arduino (Right Bottom) */
+    .node-arduino {
+        bottom: 130px;
+        right: 100px;
+        border-color: #ef4444;
+    }
+    .node-arduino .node-icon { color: #ef4444; border: 1px solid #ef4444; }
+
+    /* Serial Label */
+    .conn-label {
+        position: absolute;
+        background: #0f172a;
+        color: #94a3b8;
+        padding: 4px 10px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 11px;
+        border: 1px solid #334155;
+        border-radius: 4px;
+        z-index: 2;
+        pointer-events: auto;
+    }
+
+    /* Footer */
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 60px;
+        background: rgba(0, 0, 0, 0.8);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 20;
+    }
+    
+    .footer-text {
+        color: #64748b;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .slide-num {
+        color: #00ffff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+</style>
+</head>
+<body>
+<div class="slide-container">
+<!-- Header -->
+<div class="header">
+<h1 class="page-title">Архитектура Системы</h1>
+<div class="page-subtitle">STACK &amp; DATA FLOW</div>
+</div>
+<!-- Diagram Content -->
+<div class="diagram-area">
+<!-- SVG Connections -->
+<svg class="connections-svg">
+<defs>
+<marker id="arrow-cyan" markerheight="10" markerunits="strokeWidth" markerwidth="10" orient="auto" refx="8" refy="3">
+<path d="M0,0 L0,6 L9,3 z" fill="#00ffff"></path>
+</marker>
+<marker id="arrow-purple" markerheight="10" markerunits="strokeWidth" markerwidth="10" orient="auto" refx="8" refy="3">
+<path d="M0,0 L0,6 L9,3 z" fill="#d946ef"></path>
+</marker>
+<marker id="arrow-green" markerheight="10" markerunits="strokeWidth" markerwidth="10" orient="auto" refx="8" refy="3">
+<path d="M0,0 L0,6 L9,3 z" fill="#22c55e"></path>
+</marker>
+<marker id="arrow-red" markerheight="10" markerunits="strokeWidth" markerwidth="10" orient="auto" refx="8" refy="3">
+<path d="M0,0 L0,6 L9,3 z" fill="#ef4444"></path>
+</marker>
+<marker id="arrow-orange" markerheight="10" markerunits="strokeWidth" markerwidth="10" orient="auto" refx="8" refy="3">
+<path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"></path>
+</marker>
+</defs>
+<!-- VOSK -> Python (Left to Center) -->
+<!-- VOSK: Right X ~320, Center Y ~345. Python: Left X ~510, Center Y ~345 -->
+<path class="conn-line" d="M 322 345 L 508 345" marker-end="url(#arrow-cyan)"></path>
+<!-- Python <-> AI (Center to Top) -->
+<!-- Python: Top Y ~260. AI: Bottom Y ~265 (approx 100+165) -->
+<path class="conn-line purple" d="M 640 258 L 640 270" style="opacity:0"></path> <!-- Hidden short line, draw real one -->
+<path class="conn-line purple" d="M 640 258 L 640 270 M 640 258 L 640 270" style="display:none"></path>
+<!-- Manual coordinates based on calculation: AI Bottom is around 100(top) + 160(h) = 260. Python top 260. They touch. Let's adjust margin in CSS. -->
+<!-- AI Node top is 40+60=100. Height ~160. Bottom ~260. Python Top 260. Perfect match, arrow invisible. Let's assume margin. -->
+<!-- Drawing line from Python Top (260) to AI Bottom (260) - 20px gap visually -->
+<path class="conn-line purple" d="M 640 258 L 640 268" marker-end="url(#arrow-purple)"></path>
+<!-- Actually let's move AI up slightly in CSS logic, but drawing line from Python Center Top -->
+<path class="conn-line purple" d="M 640 258 L 640 268" style="opacity:0"></path> <!-- Placeholder -->
+<line class="conn-line purple" marker-end="url(#arrow-purple)" x1="640" x2="640" y1="258" y2="265"></line>
+<!-- Python -> DB (Center to Bottom) -->
+<!-- Python Bottom ~430. DB Top ~480. -->
+<path class="conn-line orange" d="M 640 432 L 640 478" marker-end="url(#arrow-orange)"></path>
+<!-- Python -> TTS (Center to Top Right) -->
+<!-- Python Right ~770, Center Y 345. TTS Left ~960, Center Y ~205 -->
+<path class="conn-line green" d="M 772 320 L 860 320 L 860 205 L 958 205" marker-end="url(#arrow-green)"></path>
+<!-- Python -> Arduino (Center to Bottom Right) -->
+<!-- Arduino Center Y ~500 -->
+<path class="conn-line red" d="M 772 370 L 860 370 L 860 500 L 958 500" marker-end="url(#arrow-red)"></path>
+</svg>
+<!-- Node: VOSK -->
+<div class="node node-vosk">
+<div class="node-icon"><i class="fas fa-microphone-alt"></i></div>
+<h3 class="node-title">VOSK</h3>
+<p class="node-desc">Оффлайн Распознавание<br/>Узбекский Язык</p>
+</div>
+<!-- Node: Gemini AI -->
+<div class="node node-ai">
+<div class="node-icon"><i class="fas fa-brain"></i></div>
+<h3 class="node-title">Gemini AI</h3>
+<p class="node-desc">Обработка Естественного Языка (NLP)<br/>Генерация Логики</p>
+</div>
+<!-- Node: Python Core -->
+<div class="node node-python">
+<div class="node-icon"><i class="fab fa-python"></i></div>
+<h3 class="node-title">PYTHON CORE</h3>
+<p class="node-desc">Центральный Контроллер<br/>Оркестрация Процессов</p>
+</div>
+<!-- Node: TTS -->
+<div class="node node-tts">
+<div class="node-icon"><i class="fas fa-volume-up"></i></div>
+<h3 class="node-title">pyttsx3</h3>
+<p class="node-desc">Синтез Речи (TTS)<br/>Аудио Вывод</p>
+</div>
+<!-- Node: Arduino -->
+<div class="node node-arduino">
+<div class="node-icon"><i class="fas fa-microchip"></i></div>
+<h3 class="node-title">Arduino</h3>
+<p class="node-desc">Управление Рукой<br/>Сервоприводы</p>
+</div>
+<!-- Connection Label for Arduino -->
+<div class="conn-label" style="bottom: 180px; right: 350px;">SERIAL USB</div>
+<!-- Node: SQLite -->
+<div class="node node-db">
+<div class="node-icon"><i class="fas fa-database"></i></div>
+<h3 class="node-title">SQLite</h3>
+<p class="node-desc">Локальная База Знаний<br/>История и Логи</p>
+</div>
+</div>
+<!-- Footer -->
+<div class="footer">
+<span class="footer-text">OSIYO // SYSTEM ARCHITECTURE v1.0</span>
+<span class="slide-num">10</span>
+</div>
+</div>
+</body>
+</html>
